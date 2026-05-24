@@ -38,9 +38,7 @@ export default function AgentToolsPage() {
     <div className="max-w-5xl mx-auto px-6 py-12">
       <header className="mb-10 pb-6 border-b border-ink">
         <h1 className="font-serif text-3xl font-semibold">Agent 工具汇总</h1>
-        <p className="mt-2 text-sm text-ash">
-          自动抓取 GitHub Agent 框架/工具，生成中文调研报告
-        </p>
+        
         <div className="mt-4 flex gap-3">
           <button
             onClick={handleGenerateSurvey}
@@ -71,17 +69,18 @@ export default function AgentToolsPage() {
                 <div key={tool.id} className="p-4 hover:bg-mist transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <a
-                        href={tool.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <Link
+                        to={`/agents/${tool.id}`}
                         className="font-medium hover:underline underline-offset-2"
                       >
                         {tool.name}
-                      </a>
+                      </Link>
                       {tool.description && (
                         <p className="text-xs text-ash mt-1.5 leading-relaxed">{tool.description}</p>
                       )}
+                      <Link to={`/agents/${tool.id}`} className="text-[10px] font-mono text-silver mt-2 inline-block underline">
+                        {'\u6559\u7a0b / \u95ee\u7b54 / \u62a5\u544a \u2192'}
+                      </Link>
                     </div>
                     {tool.stars != null && (
                       <span className="font-mono text-xs text-silver shrink-0">★ {tool.stars}</span>

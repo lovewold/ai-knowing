@@ -1,4 +1,4 @@
-﻿import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { getAdminToken, setAdminToken } from '../../api/admin'
 
@@ -6,7 +6,9 @@ const links = [
   { to: '/admin', label: '概览', end: true },
   { to: '/admin/models', label: '多模型', end: false },
   { to: '/admin/combos', label: 'Agent组合', end: false },
-  { to: '/admin/config', label: '配置', end: false },
+  { to: '/admin/config?tab=sources', label: '\u6570\u636e\u6e90', end: false },
+  { to: '/admin/knowledge', label: '\u77e5\u8bc6\u5e93', end: false },
+  { to: '/admin/config', label: '\u914d\u7f6e', end: false },
 ]
 
 export default function AdminLayout() {

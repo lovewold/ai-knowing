@@ -10,6 +10,7 @@ celery_app.conf.update(
     result_serializer="json",
     timezone="Asia/Shanghai",
     enable_utc=True,
+    broker_connection_retry_on_startup=True,
 )
 
 # Parse cron: "0 */2 * * *" -> every 2 hours
@@ -41,3 +42,6 @@ else:
 
 
 celery_app.autodiscover_tasks(["tasks"])
+
+# autodiscover only loads tasks.py; register crawl_tasks explicitly
+import tasks.crawl_tasks  # noqa: E402, F401

@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "fix:utf8": "py -3 ../scripts/fix_frontend_chinese.py"
+    "fix:utf8": "py -3 ../scripts/fix_frontend_chinese.py",
+    "check:encoding": "py -3 ../scripts/scan_encoding.py"
   },
   "dependencies": {
+    "@uiw/react-md-editor": "^4.1.1",
     "highlight.js": "^11.11.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

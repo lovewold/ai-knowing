@@ -18,11 +18,11 @@ export default function ArticlesPage() {
     <div className="max-w-4xl mx-auto px-6 py-12">
       <header className="mb-10 pb-6 border-b border-ink">
         <h1 className="font-serif text-3xl font-semibold">实时资讯</h1>
-        <p className="mt-2 text-sm text-ash">按百分制信噪分排序 · 高信号 {highCount} 条 · 仅展示 45 分以上</p>
+        <p className="mt-2 text-sm text-ash">按信噪比分排序 · 高信号 {highCount} 条</p>
       </header>
       {loading ? <p className="text-sm text-silver font-mono">加载中...</p>
         : articles.length ? articles.map((a, i) => <ArticleRow key={a.id} article={a} index={i} />)
-        : <EmptyState title="暂无资讯" description="点击顶部立即抓取，系统将自动翻译为中文并评分" />}
+        : <EmptyState title="暂无资讯" description="点击抓取更新" />}
     </div>
   )
 }

@@ -1,25 +1,39 @@
+export interface ReportCitation {
+  id: number
+  title: string
+  url: string
+  snippet: string
+  source_type: 'web' | 'article'
+  article_id?: number | null
+}
+
 export interface Report {
   id: number
   title: string
-  type: 'trend' | 'tool' | 'scenario' | 'agent_survey' | 'custom' | 'daily_briefing'
+  type: 'trend' | 'tool' | 'scenario' | 'agent_survey' | 'custom' | 'daily_briefing' | 'knowledge'
   quality_label: string
   created_at: string
   article_url: string | null
   source_name?: string | null
   user_prompt?: string | null
+  citation_count?: number
 }
 
 export interface ReportDetail extends Report {
   content_md: string
   article_title?: string | null
+  citations?: ReportCitation[]
+  search_queries?: string[]
+  combo_id?: number | null
 }
 
 export interface GenerateReportRequest {
   prompt: string
   article_ids?: number[]
-  include_recent_articles?: number
+  use_web_search?: boolean
+  include_db_match?: boolean
   include_agent_tools?: boolean
-  include_existing_reports?: number
+  combo_id?: number | null
 }
 
 export interface GeneratedReport extends ReportDetail {}
@@ -33,6 +47,7 @@ export interface Article {
   content?: string | null
   url: string
   source: string
+  source_id?: string
   category?: string
   signal_score: number | null
   signal_status: 'high' | 'medium' | 'low' | null
@@ -82,6 +97,79 @@ export interface AgentTool {
   article_id?: number | null
 }
 
+export interface AgentToolDetail extends AgentTool {
+  knowledge_id?: number | null
+}
+
+export interface KnowledgeEntry {
+  id: number
+  slug: string
+  kind: 'model' | 'product' | 'skill' | string
+  name: string
+  summary?: string | null
+  content_md?: string | null
+  external_url?: string | null
+  tags?: string | null
+  source_type?: string
+  agent_tool_id?: number | null
+  last_verified_at?: string | null
+  updated_at: string
+  stale?: boolean
+  enabled?: boolean
+}
+
+export interface KnowledgeEntryWrite {
+  slug: string
+  kind: 'model' | 'product' | 'skill'
+  name: string
+  summary?: string | null
+  content_md?: string | null
+  external_url?: string | null
+  tags?: string | null
+  enabled?: boolean
+}
+
+export interface ModelCatalogItem {
+  id: number
+  slug: string
+  name: string
+  provider?: string | null
+  company_name?: string | null
+  scene?: string | null
+  context_len: number
+  input_price?: number | null
+  output_price?: number | null
+  is_free: boolean
+  summary?: string | null
+  has_doc: boolean
+  source_url?: string | null
+  doc_fetched_at?: string | null
+  synced_at: string
+}
+
+export interface ModelCatalogDetail extends ModelCatalogItem {}
+
+export interface ModelCatalogDoc {
+  slug: string
+  has_doc: boolean
+  content_md?: string | null
+  doc_fetched_at?: string | null
+}
+
+export interface ModelMarketMeta {
+  total: number
+  with_docs: number
+  providers: [string, number][]
+  scenes: [string, number][]
+  source: string
+}
+
+export interface ProductCatalogGroup {
+  category: string
+  count: number
+  items: { slug: string; name: string; kind: string; summary?: string; external_url?: string }[]
+}
+
 export interface Source {
   id: string
   name: string
@@ -90,6 +178,7 @@ export interface Source {
   language: string
   enabled: boolean
   url?: string | null
+  color?: string | null
 }
 
 export interface Stats {
@@ -130,6 +219,7 @@ export interface HotspotFilters {
   hours: number
   sort: 'heat' | 'newest' | 'cross_source'
   heat_level: '' | 'high' | 'medium' | 'low'
+  signal_status: '' | 'high' | 'medium' | 'low'
   category: string
   source_id: string
   only_new: boolean
@@ -141,6 +231,7 @@ export interface HotspotSummary {
   hours: number
   total: number
   heat_tiers: { high: number; medium: number; low: number }
+  signal_tiers?: { high: number; medium: number; low: number }
   new_count: number
   by_source: Record<string, number>
   by_category: Record<string, number>

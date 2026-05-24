@@ -1,6 +1,6 @@
 # AI全知 MVP
 
-AI 行业知识库 — 自动抓取、信噪比过滤、AI 报告生成。
+多源 AI 资讯聚合，按信噪比动态分层，热点看板 + 检索式报告。
 
 ## 快速启动
 
@@ -11,13 +11,22 @@ cp .env.example .env
 # 编辑 .env，填入 DEEPSEEK_API_KEY
 ```
 
-### 2. Docker 启动（推荐）
+### 2. Docker 启动（推荐，一条命令）
 
 ```bash
 docker compose up --build
 ```
 
+API、Worker、Beat、数据库、Redis、前端全部由 Compose 拉起，无需再单独开 PyCharm 多个进程。
+
 访问 **http://localhost:3000**（前端）或 http://localhost:8000（API）
+
+仅改前端 UI 时，可只起后端栈 + 本地 Vite：
+
+```bash
+docker compose up -d postgres redis api worker beat
+cd frontend && npm install && npm run dev
+```
 
 ### 3. 手动触发抓取
 

@@ -130,12 +130,15 @@ def hotspot_summary(db: Session, hours: int = 24) -> dict:
     leveled = _assign_heat_levels(scored)
 
     tier_counts = {"high": 0, "medium": 0, "low": 0}
+    signal_counts = {"high": 0, "medium": 0, "low": 0}
     source_counts: dict[str, int] = {}
     category_counts: dict[str, int] = {}
     new_count = 0
 
     for article, level in leveled:
         tier_counts[level] += 1
+        if article.signal:
+            signal_counts[article.signal.status.value] += 1
         source_counts[article.source_name] = source_counts.get(article.source_name, 0) + 1
         category_counts[article.category] = category_counts.get(article.category, 0) + 1
         if (datetime.utcnow() - article.fetched_at) <= timedelta(hours=24):
@@ -147,6 +150,7 @@ def hotspot_summary(db: Session, hours: int = 24) -> dict:
         "hours": hours,
         "total": len(articles),
         "heat_tiers": tier_counts,
+        "signal_tiers": signal_counts,
         "new_count": new_count,
         "by_source": source_counts,
         "by_category": category_counts,

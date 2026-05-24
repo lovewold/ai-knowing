@@ -7,18 +7,25 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session, joinedload
 
 from app.admin.routes import router as admin_router
+from app.knowledge.routes import router as knowledge_router
+from app.knowledge.seed import ensure_knowledge_indexed, seed_knowledge, sync_agent_tools_to_knowledge
+from app.marketplace.routes import router as marketplace_router
 from app.admin.seed import seed_admin_data
 from app.database import get_db, init_db
 from app.models import AgentCombo, AgentComboMember, AgentTool, DailyBriefing, RawArticle, Report, ReportType, SignalScore, SignalStatus
 from app.hotspots import hotspot_summary, query_hotspots
 from app.pipeline import backfill_localization, run_full_pipeline
 from app.reports.daily_briefing import briefing_to_dict, generate_daily_briefing, generate_daily_briefing_if_needed
+from app.reports.citations import citations_from_json, queries_from_json
 from app.reports.generator import generate_custom_report
+from app.reports.workflow import generate_research_report
 from app.yaml_config import load_douyin_creators, load_sources
 
-app = FastAPI(title="AI全知", description="AI 行业知识库 - 抓取与报告系统")
+app = FastAPI(title="AI全知", description="多源 AI 资讯聚合 · 信噪比分层 · 热点看板")
 templates = Jinja2Templates(directory="app/templates")
 app.include_router(admin_router)
+app.include_router(knowledge_router)
+app.include_router(marketplace_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,12 +39,17 @@ app.add_middleware(
 class GenerateReportRequest(BaseModel):
     prompt: str = Field(..., min_length=5, max_length=4000)
     article_ids: list[int] = Field(default_factory=list)
-    include_recent_articles: int = Field(default=10, ge=0, le=30)
+    use_web_search: bool = True
+    include_db_match: bool = True
     include_agent_tools: bool = False
-    include_existing_reports: int = Field(default=3, ge=0, le=10)
+    combo_id: int | None = None
+    # legacy fallback when use_web_search=false
+    include_recent_articles: int = Field(default=0, ge=0, le=30)
+    include_existing_reports: int = Field(default=0, ge=0, le=10)
 
 
 def _report_summary(r: Report) -> dict:
+    citations = citations_from_json(r.citations_json)
     return {
         "id": r.id,
         "title": r.title,
@@ -47,16 +59,44 @@ def _report_summary(r: Report) -> dict:
         "article_url": r.article.url if r.article else None,
         "source_name": r.article.source_name if r.article else None,
         "user_prompt": r.user_prompt,
+        "citation_count": len(citations),
+    }
+
+
+def _report_detail_dict(report: Report) -> dict:
+    article = report.article
+    citations = citations_from_json(report.citations_json)
+    return {
+        "id": report.id,
+        "title": report.title,
+        "type": report.report_type.value,
+        "content_md": report.content_md,
+        "quality_label": report.quality_label,
+        "created_at": report.created_at.isoformat(),
+        "article_url": article.url if article else None,
+        "article_title": article.title if article else None,
+        "source_name": article.source_name if article else None,
+        "user_prompt": report.user_prompt,
+        "citations": [c.to_dict() for c in citations],
+        "search_queries": queries_from_json(report.search_queries_json),
+        "combo_id": report.combo_id,
     }
 
 
 @app.on_event("startup")
-def startup():
+async def startup():
     init_db()
     from app.database import SessionLocal
+    from app.knowledge.seed import ensure_knowledge_indexed, seed_knowledge, sync_agent_tools_to_knowledge
+
     db = SessionLocal()
     try:
         seed_admin_data(db)
+        await seed_knowledge(db)
+        await sync_agent_tools_to_knowledge(db)
+        n = await ensure_knowledge_indexed(db)
+        if n:
+            print(f"[knowledge] reindexed {n} entries with local vectors")
     finally:
         db.close()
 
@@ -114,6 +154,7 @@ def _article_dict(a: RawArticle) -> dict:
         "summary": a.summary_zh or a.summary,
         "url": a.url,
         "source": a.source_name,
+        "source_id": a.source_id,
         "category": a.category,
         "signal_score": a.signal.score if a.signal else None,
         "signal_status": a.signal.status.value if a.signal else None,
@@ -167,54 +208,59 @@ def api_reports(report_type: str | None = None, db: Session = Depends(get_db)):
 
 @app.post("/api/reports/generate")
 async def api_generate_report(body: GenerateReportRequest, db: Session = Depends(get_db)):
-    articles: list[RawArticle] = []
-    if body.article_ids:
-        articles = (
-            db.query(RawArticle)
-            .options(joinedload(RawArticle.signal))
-            .filter(RawArticle.id.in_(body.article_ids))
-            .all()
-        )
-    elif body.include_recent_articles > 0:
-        articles = (
-            db.query(RawArticle)
-            .options(joinedload(RawArticle.signal))
-            .order_by(RawArticle.fetched_at.desc())
-            .limit(body.include_recent_articles)
-            .all()
+    if body.use_web_search:
+        try:
+            report = await generate_research_report(
+                body.prompt,
+                db=db,
+                article_ids=body.article_ids or None,
+                include_db_match=body.include_db_match,
+                combo_id=body.combo_id,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+    else:
+        articles: list[RawArticle] = []
+        if body.article_ids:
+            articles = (
+                db.query(RawArticle)
+                .options(joinedload(RawArticle.signal))
+                .filter(RawArticle.id.in_(body.article_ids))
+                .all()
+            )
+        elif body.include_recent_articles > 0:
+            articles = (
+                db.query(RawArticle)
+                .options(joinedload(RawArticle.signal))
+                .order_by(RawArticle.fetched_at.desc())
+                .limit(body.include_recent_articles)
+                .all()
+            )
+
+        tools: list[AgentTool] = []
+        if body.include_agent_tools:
+            tools = db.query(AgentTool).order_by(AgentTool.stars.desc().nullslast()).all()
+
+        existing: list[Report] = []
+        if body.include_existing_reports > 0:
+            existing = (
+                db.query(Report)
+                .order_by(Report.created_at.desc())
+                .limit(body.include_existing_reports)
+                .all()
+            )
+
+        report = await generate_custom_report(
+            body.prompt,
+            articles=articles or None,
+            tools=tools or None,
+            existing_reports=existing or None,
         )
 
-    tools: list[AgentTool] = []
-    if body.include_agent_tools:
-        tools = db.query(AgentTool).order_by(AgentTool.stars.desc().nullslast()).all()
-
-    existing: list[Report] = []
-    if body.include_existing_reports > 0:
-        existing = (
-            db.query(Report)
-            .order_by(Report.created_at.desc())
-            .limit(body.include_existing_reports)
-            .all()
-        )
-
-    report = await generate_custom_report(
-        body.prompt,
-        articles=articles or None,
-        tools=tools or None,
-        existing_reports=existing or None,
-    )
     db.add(report)
     db.commit()
     db.refresh(report)
-    return {
-        "id": report.id,
-        "title": report.title,
-        "type": report.report_type.value,
-        "content_md": report.content_md,
-        "quality_label": report.quality_label,
-        "created_at": report.created_at.isoformat(),
-        "user_prompt": report.user_prompt,
-    }
+    return _report_detail_dict(report)
 
 
 @app.get("/api/reports/{report_id}/download")
@@ -233,6 +279,24 @@ def api_report_download(report_id: int, db: Session = Depends(get_db)):
     )
 
 
+class ReportDiscussRequest(BaseModel):
+    message: str = Field(..., min_length=2, max_length=2000)
+    history: list[dict] = Field(default_factory=list)
+
+
+@app.post("/api/reports/{report_id}/discuss")
+async def api_report_discuss(report_id: int, body: ReportDiscussRequest, db: Session = Depends(get_db)):
+    report = db.query(Report).filter(Report.id == report_id).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+    from app.reports.discuss import discuss_report
+
+    try:
+        return await discuss_report(db, report, body.message, body.history)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"对话失败: {e}") from e
+
+
 @app.get("/api/reports/{report_id}")
 def api_report_detail(report_id: int, db: Session = Depends(get_db)):
     report = (
@@ -243,19 +307,7 @@ def api_report_detail(report_id: int, db: Session = Depends(get_db)):
     )
     if not report:
         raise HTTPException(status_code=404)
-    article = report.article
-    return {
-        "id": report.id,
-        "title": report.title,
-        "type": report.report_type.value,
-        "content_md": report.content_md,
-        "quality_label": report.quality_label,
-        "created_at": report.created_at.isoformat(),
-        "article_url": article.url if article else None,
-        "article_title": article.title if article else None,
-        "source_name": article.source_name if article else None,
-        "user_prompt": report.user_prompt,
-    }
+    return _report_detail_dict(report)
 
 
 @app.get("/api/hotspots")
@@ -380,6 +432,28 @@ async def api_generate_daily_briefing(db: Session = Depends(get_db)):
 @app.get("/api/creators/douyin")
 def api_douyin_creators():
     return [c.model_dump() for c in load_douyin_creators()]
+
+
+@app.get("/api/agent-tools/{tool_id}")
+def api_agent_tool(tool_id: int, db: Session = Depends(get_db)):
+    from app.models import KnowledgeEntry
+
+    t = db.query(AgentTool).filter(AgentTool.id == tool_id).first()
+    if not t:
+        raise HTTPException(404, "工具不存在")
+    k = db.query(KnowledgeEntry).filter(KnowledgeEntry.agent_tool_id == t.id).first()
+    return {
+        "id": t.id,
+        "name": t.name_zh or t.name,
+        "name_original": t.name,
+        "url": t.url,
+        "description": t.description_zh or t.description,
+        "stars": t.stars,
+        "tool_type": t.tool_type,
+        "report_id": t.report_id,
+        "article_id": t.article_id,
+        "knowledge_id": k.id if k else None,
+    }
 
 
 @app.get("/api/agent-tools")

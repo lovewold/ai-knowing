@@ -1,9 +1,12 @@
 from app.crawlers.arxiv import crawl_arxiv
 from app.crawlers.base import CrawledItem
+from app.crawlers.firecrawl import crawl_firecrawl
 from app.crawlers.github import crawl_github_trending
 from app.crawlers.github_search import crawl_github_search
 from app.crawlers.hackernews import crawl_hackernews
+from app.crawlers.http_json import crawl_http_json
 from app.crawlers.rss import crawl_rss
+from app.crawlers.twitterapi_io import crawl_twitterapi_io
 from app.yaml_config import SourceConfig, load_sources
 
 CRAWLER_MAP = {
@@ -12,6 +15,9 @@ CRAWLER_MAP = {
     "hackernews": crawl_hackernews,
     "github_trending": crawl_github_trending,
     "github_search": crawl_github_search,
+    "firecrawl": crawl_firecrawl,
+    "twitterapi_io": crawl_twitterapi_io,
+    "http_json": crawl_http_json,
 }
 
 

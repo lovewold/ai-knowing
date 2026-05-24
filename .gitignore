@@ -31,3 +31,14 @@ backend/data/
 
 # Cursor / local
 .cursor/
+
+# One-off dev / migration scripts (not part of the app)
+scripts/probe_agicto[0-9].py
+scripts/probe_agicto1[0-9].py
+scripts/test_detail*.py
+scripts/test_utf8.txt
+scripts/refactor_*.py
+scripts/write_*.py
+scripts/refresh_ui_copy.py
+scripts/fix_hotspot_page.py
+scripts/fix_signal_badge.py

@@ -1,5 +1,6 @@
 import type { Article } from '../types'
 import SignalBadge from './SignalBadge'
+import SourceBadge from './SourceBadge'
 
 interface ArticleRowProps {
   article: Article
@@ -29,7 +30,7 @@ export default function ArticleRow({ article, index = 0 }: ArticleRowProps) {
             <p className="text-xs text-ash mt-1.5 leading-relaxed line-clamp-2">{article.summary}</p>
           )}
           <div className="flex items-center gap-3 mt-2">
-            <span className="text-[10px] font-mono text-silver uppercase tracking-wider">{article.source}</span>
+            <SourceBadge name={article.source} sourceId={article.source_id} />
             {article.category && article.category !== 'news' && (
               <span className="text-[10px] font-mono border border-ink px-1.5 py-0.5">{article.category}</span>
             )}

@@ -186,11 +186,8 @@ export default function DailyBriefingPage() {
   return (
     <div className="max-w-3xl mx-auto px-6 py-12">
       <header className="mb-8 pb-6 border-b border-ink">
-        <p className="text-[10px] font-mono uppercase tracking-widest text-silver mb-2">Daily Briefing</p>
         <h1 className="font-serif text-3xl font-semibold">每日晨报</h1>
-        <p className="mt-2 text-sm text-ash">
-          自动汇总过去 24 小时高信噪比 AI 资讯（中文摘要），单次 AI 生成导语，省 Token
-        </p>
+        <p className="mt-2 text-sm text-ash">24 小时高信号资讯汇总</p>
         <button
           type="button"
           onClick={handleGenerate}

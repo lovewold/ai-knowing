@@ -128,10 +128,43 @@ def seed_agent_combos(db: Session) -> int:
     return added
 
 
+def sync_llm_keys_from_env(db: Session) -> int:
+    """Refresh DB model keys from .env when env has keys but DB row is empty or disabled."""
+    updated = 0
+    if settings.deepseek_api_key:
+        row = (
+            db.query(LlmModelConfig)
+            .filter(LlmModelConfig.provider == "deepseek")
+            .order_by(LlmModelConfig.is_default.desc(), LlmModelConfig.id.asc())
+            .first()
+        )
+        if row:
+            changed = False
+            if not row.api_key:
+                row.api_key = settings.deepseek_api_key
+                changed = True
+            if not row.enabled:
+                row.enabled = True
+                changed = True
+            if settings.deepseek_model and row.model_id != settings.deepseek_model:
+                row.model_id = settings.deepseek_model
+                changed = True
+            if settings.deepseek_base_url and not row.base_url:
+                row.base_url = settings.deepseek_base_url
+                changed = True
+            if changed:
+                updated += 1
+    db.commit()
+    return updated
+
+
 def seed_admin_data(db: Session) -> dict:
     from app.agent.catalog import seed_known_agent_tools
     seed_known_agent_tools(db)
+    llm_added = seed_llm_models(db)
+    llm_synced = sync_llm_keys_from_env(db)
     return {
-        "llm_models": seed_llm_models(db),
+        "llm_models": llm_added,
+        "llm_synced": llm_synced,
         "agent_combos": seed_agent_combos(db),
     }

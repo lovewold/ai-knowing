@@ -11,9 +11,10 @@ from app.yaml_config import DouyinCreator, DailyBriefingConfig, load_daily_brief
 OVERVIEW_PROMPT = """你是 AI全知 平台的晨报编辑。以下是从过去 {hours} 小时内筛选出的 {count} 条高质量 AI 资讯（已含中文标题与摘要）。
 
 请用中文撰写「今日 AI 晨报导语」，要求：
-1. 3-5 句话，概括今日最重要趋势与共性主题
-2. 不要逐条复述，只做宏观归纳
-3. 末尾一行输出主题标签，格式：标签: 标签1, 标签2, 标签3（3-5个）
+1. 8-12 句话，约 600-1000 字，分 2-3 段概括今日最重要趋势、产品动态、技术突破与产业信号
+2. 不要逐条复述标题，按主题归纳（如大模型、Agent、开源、融资、政策等）
+3. 每段聚焦一个宏观主题，语言专业但易读，适合 AI 从业者晨读
+4. 末尾一行输出主题标签，格式：标签: 标签1, 标签2, 标签3（4-6个）
 
 资讯清单：
 {items}
@@ -27,7 +28,7 @@ def _article_title(a: RawArticle) -> str:
 
 def _article_summary(a: RawArticle) -> str:
     s = a.summary_zh or a.summary or ""
-    return s[:180] + ("..." if len(s) > 180 else s)
+    return s[:400] + ("..." if len(s) > 400 else s)
 
 
 def select_briefing_articles(db: Session, cfg: DailyBriefingConfig) -> list[tuple[RawArticle, float]]:
@@ -91,7 +92,7 @@ async def _generate_overview(cfg: DailyBriefingConfig, articles: list[tuple[RawA
     items_block = _build_items_block(articles)
     prompt = OVERVIEW_PROMPT.format(hours=cfg.window_hours, count=len(articles), items=items_block)
     raw = await llm.generate(
-        "你是简洁专业的 AI 行业晨报编辑，输出精炼中文。",
+        "你是专业的 AI 行业晨报编辑，输出详实、有洞察的中文导语，篇幅充足。",
         prompt,
     )
     theme_tags = None
@@ -103,7 +104,7 @@ async def _generate_overview(cfg: DailyBriefingConfig, articles: list[tuple[RawA
         else:
             body_lines.append(line)
     overview = "\n".join(body_lines).strip() or raw.strip()
-    return overview[:2000], theme_tags
+    return overview[:5000], theme_tags
 
 
 def _add_creator_items(briefing: DailyBriefing, creators: list[DouyinCreator], start_order: int) -> int:

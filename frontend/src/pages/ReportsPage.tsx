@@ -7,13 +7,13 @@ import EmptyState from '../components/EmptyState'
 import CustomReportPanel from '../components/CustomReportPanel'
 
 const filters = [
-  { key: '', label: '全部' },
-  { key: 'custom', label: '自定义' },
-  { key: 'trend', label: '趋势' },
-  { key: 'tool', label: '工具' },
-  { key: 'agent_survey', label: 'Agent全景' },
-  { key: 'daily_briefing', label: '每日晨报' },
-  { key: 'scenario', label: '场景' },
+  { key: '', label: '\u5168\u90e8' },
+  { key: 'custom', label: '\u81ea\u5b9a\u4e49' },
+  { key: 'trend', label: '\u8d8b\u52bf' },
+  { key: 'tool', label: '\u5de5\u5177' },
+  { key: 'agent_survey', label: 'Agent\u5168\u666f' },
+  { key: 'daily_briefing', label: '\u6bcf\u65e5\u6668\u62a5' },
+  { key: 'scenario', label: '\u573a\u666f' },
 ]
 
 export default function ReportsPage() {
@@ -30,10 +30,7 @@ export default function ReportsPage() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
       <header className="mb-8 pb-6 border-b border-ink">
-        <h1 className="font-serif text-3xl font-semibold">AI 报告</h1>
-        <p className="mt-2 text-sm text-ash">
-          自动生成的技术报告，或用自然语言描述生成任意类型报告
-        </p>
+        <h1 className="font-serif text-3xl font-semibold">{'\u62a5\u544a'}</h1>
       </header>
 
       <CustomReportPanel />
@@ -51,13 +48,13 @@ export default function ReportsPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-silver font-mono">加载中...</p>
+        <p className="text-sm text-silver font-mono">{'\u52a0\u8f7d\u4e2d...'}</p>
       ) : reports.length ? (
         <div className="border-t border-ink">{reports.map((r, i) => <ReportCard key={r.id} report={r} index={i} />)}</div>
       ) : (
         <EmptyState
-          title="暂无报告"
-          description="在上方填写报告描述生成自定义报告，或触发抓取自动生成"
+          title={'\u6682\u65e0\u62a5\u544a'}
+          description={'\u8f93\u5165\u63cf\u8ff0\u751f\u6210\u68c0\u7d22\u5f0f\u62a5\u544a'}
         />
       )}
     </div>

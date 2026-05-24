@@ -12,8 +12,8 @@ export default {
         silver: '#999999',
       },
       fontFamily: {
-        serif: ['"Noto Serif SC"', '"Playfair Display"', 'Georgia', 'serif'],
-        sans: ['"DM Sans"', '"Noto Sans SC"', 'system-ui', 'sans-serif'],
+        serif: ['"Noto Sans SC"', '"DM Sans"', 'system-ui', 'sans-serif'],
+        sans: ['"Noto Sans SC"', '"DM Sans"', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       boxShadow: {

@@ -79,6 +79,9 @@ export interface SourceConfig {
   category?: string | null
   filter?: string | null
   query?: string | null
+  color?: string | null
+  parser?: string | null
+  min_engagement?: number | null
 }
 
 export interface BriefingConfig {

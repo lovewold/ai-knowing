@@ -16,6 +16,9 @@ class SourceConfig(BaseModel):
     category: str | None = None
     filter: str | None = None
     query: str | None = None
+    color: str | None = None
+    parser: str | None = None
+    min_engagement: int | None = None
 
 
 class ScoringWeights(BaseModel):
@@ -78,7 +81,7 @@ class DailyBriefingConfig(BaseModel):
     include_medium_zh: bool = True
     medium_zh_min_score: float = 52.0
     prefer_localized: bool = True
-    overview_max_tokens: int = 280
+    overview_max_tokens: int = 900
 
 
 class DouyinCreator(BaseModel):

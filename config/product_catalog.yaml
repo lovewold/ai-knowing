@@ -1,0 +1,348 @@
+# AI 产品清单 — 按 category 分类，后续可扩展
+# 字段: slug, kind(product), category, name, summary, external_url, readme_url(可选), tags
+
+entries:
+  # --- IDE / 编程 ---
+  - slug: cursor-ide
+    kind: product
+    category: IDE
+    name: Cursor
+    summary: AI 原生代码编辑器，Agent、Composer、MCP 深度集成。
+    external_url: https://cursor.com
+    tags: IDE,Agent,代码
+
+  - slug: windsurf
+    kind: product
+    category: IDE
+    name: Windsurf (Codeium)
+    summary: Codeium 推出的 AI IDE，强调 Cascade 代理式编码。
+    external_url: https://codeium.com/windsurf
+    tags: IDE,Agent
+
+  - slug: github-copilot
+    kind: product
+    category: IDE
+    name: GitHub Copilot
+    summary: GitHub / OpenAI 联合推出的 AI 编程助手。
+    external_url: https://github.com/features/copilot
+    tags: IDE,代码,GitHub
+
+  - slug: trae
+    kind: product
+    category: IDE
+    name: Trae
+    summary: 字节跳动 AI IDE，面向中文开发者。
+    external_url: https://www.trae.ai
+    tags: IDE,代码
+
+  - slug: continue-dev
+    kind: product
+    category: IDE
+    name: Continue
+    summary: 开源 AI 代码助手，可接入 VS Code / JetBrains。
+    external_url: https://github.com/continuedev/continue
+    readme_url: https://raw.githubusercontent.com/continuedev/continue/main/README.md
+    tags: IDE,开源
+
+  - slug: aider
+    kind: product
+    category: IDE
+    name: Aider
+    summary: 终端里的 AI 结对编程工具，支持 Git 工作流。
+    external_url: https://github.com/Aider-AI/aider
+    readme_url: https://raw.githubusercontent.com/Aider-AI/aider/main/README.md
+    tags: IDE,CLI,开源
+
+  # --- Agent 平台 ---
+  - slug: coze
+    kind: product
+    category: Agent平台
+    name: Coze / 扣子
+    summary: 字节 AI Agent 搭建、插件与工作流发布平台。
+    external_url: https://www.coze.cn
+    tags: Agent,低代码,Bot
+
+  - slug: dify
+    kind: product
+    category: Agent平台
+    name: Dify
+    summary: 开源 LLM 应用开发平台，RAG、Agent、Workflow。
+    external_url: https://github.com/langgenius/dify
+    readme_url: https://raw.githubusercontent.com/langgenius/dify/main/README.md
+    tags: Agent,RAG,开源
+
+  - slug: fastgpt
+    kind: product
+    category: Agent平台
+    name: FastGPT
+    summary: 知识库问答与 Agent 编排平台。
+    external_url: https://github.com/labring/FastGPT
+    readme_url: https://raw.githubusercontent.com/labring/FastGPT/main/README.md
+    tags: Agent,RAG,开源
+
+  - slug: langflow
+    kind: product
+    category: Agent平台
+    name: LangFlow
+    summary: 可视化 LangChain 流程构建器。
+    external_url: https://github.com/langflow-ai/langflow
+    readme_url: https://raw.githubusercontent.com/langflow-ai/langflow/main/README.md
+    tags: Agent,可视化,开源
+
+  - slug: flowise
+    kind: product
+    category: Agent平台
+    name: Flowise
+    summary: 低代码 LLM Apps 与 Agent 链搭建。
+    external_url: https://github.com/FlowiseAI/Flowise
+    readme_url: https://raw.githubusercontent.com/FlowiseAI/Flowise/main/README.md
+    tags: Agent,低代码,开源
+
+  - slug: n8n
+    kind: product
+    category: Agent平台
+    name: n8n
+    summary: 工作流自动化平台，支持 AI 节点与集成。
+    external_url: https://github.com/n8n-io/n8n
+    readme_url: https://raw.githubusercontent.com/n8n-io/n8n/master/README.md
+    tags: 工作流,自动化,开源
+
+  # --- 对话助手 / 应用 ---
+  - slug: chatgpt
+    kind: product
+    category: 对话助手
+    name: ChatGPT
+    summary: OpenAI 对话产品，支持 GPT 系列与插件/Agent。
+    external_url: https://chat.openai.com
+    tags: 对话,OpenAI
+
+  - slug: claude-app
+    kind: product
+    category: 对话助手
+    name: Claude
+    summary: Anthropic 对话助手，长文档与代码能力强。
+    external_url: https://claude.ai
+    tags: 对话,Anthropic
+
+  - slug: gemini-app
+    kind: product
+    category: 对话助手
+    name: Gemini
+    summary: Google 多模态 AI 助手。
+    external_url: https://gemini.google.com
+    tags: 对话,Google,多模态
+
+  - slug: kimi-app
+    kind: product
+    category: 对话助手
+    name: Kimi
+    summary: 月之暗面长上下文对话产品。
+    external_url: https://kimi.moonshot.cn
+    tags: 对话,长上下文
+
+  - slug: doubao-app
+    kind: product
+    category: 对话助手
+    name: 豆包
+    summary: 字节跳动 AI 助手，多模态与 Agent。
+    external_url: https://www.doubao.com
+    tags: 对话,字节
+
+  - slug: tongyi-app
+    kind: product
+    category: 对话助手
+    name: 通义千问
+    summary: 阿里云大模型对话与 API 产品。
+    external_url: https://tongyi.aliyun.com
+    tags: 对话,阿里
+
+  # --- 图像 / 视频 ---
+  - slug: midjourney
+    kind: product
+    category: 图像视频
+    name: Midjourney
+    summary: 高质量 AI 图像生成服务。
+    external_url: https://www.midjourney.com
+    tags: 图像,生成
+
+  - slug: stable-diffusion
+    kind: product
+    category: 图像视频
+    name: Stable Diffusion
+    summary: 开源图像生成模型生态（Stability AI）。
+    external_url: https://github.com/Stability-AI/stablediffusion
+    tags: 图像,开源
+
+  - slug: runway
+    kind: product
+    category: 图像视频
+    name: Runway
+    summary: AI 视频生成与编辑平台。
+    external_url: https://runwayml.com
+    tags: 视频,生成
+
+  - slug: kling
+    kind: product
+    category: 图像视频
+    name: 可灵 Kling
+    summary: 快手 AI 视频生成。
+    external_url: https://klingai.com
+    tags: 视频,生成
+
+  # --- RAG / 框架 ---
+  - slug: langchain
+    kind: product
+    category: RAG框架
+    name: LangChain
+    summary: LLM 应用开发框架，Chain / Agent / RAG。
+    external_url: https://github.com/langchain-ai/langchain
+    readme_url: https://raw.githubusercontent.com/langchain-ai/langchain/master/README.md
+    tags: RAG,框架,开源
+
+  - slug: llamaindex
+    kind: product
+    category: RAG框架
+    name: LlamaIndex
+    summary: 数据索引与 RAG 框架。
+    external_url: https://github.com/run-llama/llama_index
+    readme_url: https://raw.githubusercontent.com/run-llama/llama_index/main/README.md
+    tags: RAG,框架,开源
+
+  - slug: haystack
+    kind: product
+    category: RAG框架
+    name: Haystack
+    summary: deepset 开源 NLP / RAG 流水线框架。
+    external_url: https://github.com/deepset-ai/haystack
+    readme_url: https://raw.githubusercontent.com/deepset-ai/haystack/main/README.md
+    tags: RAG,框架,开源
+
+  - slug: semantic-kernel
+    kind: product
+    category: RAG框架
+    name: Semantic Kernel
+    summary: 微软 LLM 编排 SDK，支持插件与规划。
+    external_url: https://github.com/microsoft/semantic-kernel
+    readme_url: https://raw.githubusercontent.com/microsoft/semantic-kernel/main/README.md
+    tags: Agent,框架,微软
+
+  # --- 向量数据库 ---
+  - slug: pinecone
+    kind: product
+    category: 向量数据库
+    name: Pinecone
+    summary: 托管向量数据库，RAG 常用。
+    external_url: https://www.pinecone.io
+    tags: 向量,RAG
+
+  - slug: milvus
+    kind: product
+    category: 向量数据库
+    name: Milvus
+    summary: 开源向量数据库。
+    external_url: https://github.com/milvus-io/milvus
+    readme_url: https://raw.githubusercontent.com/milvus-io/milvus/master/README.md
+    tags: 向量,开源
+
+  - slug: qdrant
+    kind: product
+    category: 向量数据库
+    name: Qdrant
+    summary: 高性能向量搜索引擎。
+    external_url: https://github.com/qdrant/qdrant
+    readme_url: https://raw.githubusercontent.com/qdrant/qdrant/master/README.md
+    tags: 向量,开源
+
+  - slug: chroma
+    kind: product
+    category: 向量数据库
+    name: Chroma
+    summary: 嵌入式 AI 原生向量数据库。
+    external_url: https://github.com/chroma-core/chroma
+    readme_url: https://raw.githubusercontent.com/chroma-core/chroma/main/README.md
+    tags: 向量,开源
+
+  # --- 模型托管 / 推理 ---
+  - slug: ollama
+    kind: product
+    category: 模型托管
+    name: Ollama
+    summary: 本地运行开源大模型的工具。
+    external_url: https://github.com/ollama/ollama
+    readme_url: https://raw.githubusercontent.com/ollama/ollama/main/README.md
+    tags: 本地,开源
+
+  - slug: vllm
+    kind: product
+    category: 模型托管
+    name: vLLM
+    summary: 高吞吐 LLM 推理与服务框架。
+    external_url: https://github.com/vllm-project/vllm
+    readme_url: https://raw.githubusercontent.com/vllm-project/vllm/main/README.md
+    tags: 推理,开源
+
+  - slug: lm-studio
+    kind: product
+    category: 模型托管
+    name: LM Studio
+    summary: 桌面端本地模型运行与 API。
+    external_url: https://lmstudio.ai
+    tags: 本地,桌面
+
+  # --- 协议 / Skill ---
+  - slug: skill-mcp
+    kind: skill
+    category: 协议
+    name: MCP (Model Context Protocol)
+    summary: 连接 LLM 与外部工具/数据源的标准协议。
+    external_url: https://modelcontextprotocol.io
+    tags: MCP,协议,工具
+
+  - slug: openai-api
+    kind: skill
+    category: 协议
+    name: OpenAI 兼容 API
+    summary: 事实上的 LLM HTTP API 标准格式。
+    external_url: https://platform.openai.com/docs/api-reference
+    tags: API,协议
+
+  # --- 模型 API（精选，与模型广场互补）---
+  - slug: deepseek-chat
+    kind: model
+    category: 大模型API
+    name: DeepSeek Chat
+    summary: 国产高性价比大语言模型，适合对话、代码与长文本。
+    external_url: https://platform.deepseek.com/api-docs
+    tags: LLM,API,中文
+
+  - slug: openai-gpt-4o
+    kind: model
+    category: 大模型API
+    name: OpenAI GPT-4o
+    summary: OpenAI 多模态旗舰模型。
+    external_url: https://platform.openai.com/docs
+    tags: LLM,多模态,API
+
+  - slug: claude-sonnet
+    kind: model
+    category: 大模型API
+    name: Anthropic Claude Sonnet
+    summary: Anthropic 平衡型模型，长上下文与代码优秀。
+    external_url: https://docs.anthropic.com
+    tags: LLM,Agent,长上下文
+
+  - slug: qwen-api
+    kind: model
+    category: 大模型API
+    name: 通义千问 API
+    summary: 阿里云通义大模型开放平台。
+    external_url: https://help.aliyun.com/zh/model-studio/
+    tags: LLM,API,阿里
+
+  - slug: zhipu-glm
+    kind: model
+    category: 大模型API
+    name: 智谱 GLM
+    summary: 智谱 AI 大模型 API 与 Agent 平台。
+    external_url: https://open.bigmodel.cn
+    tags: LLM,API,智谱

@@ -28,6 +28,15 @@ class Settings(BaseSettings):
     auto_localize_on_crawl: bool = True
     localize_backlog_per_run: int = 30
     admin_token: str = ""  # 设置后管理 API 需 X-Admin-Token 头
+    tavily_api_key: str = ""
+    firecrawl_api_key: str = ""
+    twitterapi_io_key: str = ""
+    # embedding: local = 本地 fastembed（默认，无需 Key）；openai = 远程 API；auto = 有 Key 用 API 否则本地
+    embedding_provider: str = "local"
+    local_embedding_model: str = "BAAI/bge-small-zh-v1.5"
+    embedding_api_key: str = ""
+    embedding_base_url: str = "https://api.openai.com"
+    embedding_model: str = "text-embedding-3-small"
 
 
 settings = Settings()

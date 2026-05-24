@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { api } from '../api/client'
 import type { Hotspot, HotspotFilters, HotspotSummary, Source } from '../types'
 import HotCard from '../components/HotCard'
@@ -15,6 +15,13 @@ const HEAT_TABS = [
   { key: 'high', label: '高热' },
   { key: 'medium', label: '中热' },
   { key: 'low', label: '低热' },
+] as const
+
+const SIGNAL_TABS = [
+  { key: '', label: '全部信号' },
+  { key: 'high', label: '高信号' },
+  { key: 'medium', label: '观察' },
+  { key: 'low', label: '低信号' },
 ] as const
 
 const HOURS = [
@@ -36,6 +43,7 @@ export default function HotspotPage() {
     hours: 24,
     sort: 'heat',
     heat_level: '',
+    signal_status: '',
     category: '',
     source_id: '',
     only_new: false,
@@ -54,10 +62,7 @@ export default function HotspotPage() {
 
   useEffect(() => {
     setLoading(true)
-    Promise.all([
-      api.getHotspots(filters),
-      api.getHotspotSummary(filters.hours),
-    ])
+    Promise.all([api.getHotspots(filters), api.getHotspotSummary(filters.hours)])
       .then(([res, sum]) => {
         setItems(res.items)
         setTotal(res.total)
@@ -74,46 +79,45 @@ export default function HotspotPage() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
       <header className="mb-8 pb-6 border-b border-ink">
-        <p className="text-[10px] font-mono uppercase tracking-widest text-silver mb-2">Hotspot Feed</p>
-        <h1 className="font-serif text-3xl font-semibold">咨询汇总</h1>
-        <p className="mt-2 text-sm text-ash max-w-2xl">
-          多源 AI 资讯聚合，按信噪比动态分层，参考
-          {' '}<a href="https://github.com/tbang6860-commits/aihot" target="_blank" rel="noopener noreferrer" className="underline">PulseSphere</a>
-          {' '}热点看板设计。
-        </p>
+        <h1 className="font-serif text-3xl font-semibold">热点看板</h1>
+        <p className="mt-2 text-sm text-ash">多源 AI 资讯聚合，按信噪比动态分层</p>
       </header>
 
       {summary && (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
           <Stat label="总计" value={summary.total} />
+          <Stat label="高信号" value={summary.signal_tiers?.high ?? 0} accent />
+          <Stat label="观察" value={summary.signal_tiers?.medium ?? 0} />
           <Stat label="高热" value={summary.heat_tiers.high} />
-          <Stat label="中热" value={summary.heat_tiers.medium} />
           <Stat label="24h 新增" value={summary.new_count} />
           <Stat label="数据源" value={Object.keys(summary.by_source).length} />
         </div>
       )}
 
-      <div className="space-y-4 mb-8">
+      <div className="space-y-3 mb-8">
         <div className="flex flex-wrap gap-2">
           {HOURS.map(({ key, label }) => (
             <FilterChip key={key} active={filters.hours === key} onClick={() => setFilter('hours', key)}>{label}</FilterChip>
           ))}
-        </div>
-        <div className="flex flex-wrap gap-2">
           {SORTS.map(({ key, label }) => (
             <FilterChip key={key} active={filters.sort === key} onClick={() => setFilter('sort', key)}>{label}</FilterChip>
           ))}
         </div>
         <div className="flex flex-wrap gap-2">
+          {SIGNAL_TABS.map(({ key, label }) => (
+            <FilterChip key={key || 'sig-all'} active={filters.signal_status === key} onClick={() => setFilter('signal_status', key)}>{label}</FilterChip>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2">
           {HEAT_TABS.map(({ key, label }) => (
-            <FilterChip key={key || 'all'} active={filters.heat_level === key} onClick={() => setFilter('heat_level', key)}>{label}</FilterChip>
+            <FilterChip key={key || 'heat-all'} active={filters.heat_level === key} onClick={() => setFilter('heat_level', key)}>{label}</FilterChip>
           ))}
           <FilterChip active={filters.only_new} onClick={() => setFilter('only_new', !filters.only_new)}>只看新热点</FilterChip>
           <FilterChip active={filters.min_sources >= 2} onClick={() => setFilter('min_sources', filters.min_sources >= 2 ? 0 : 2)}>跨平台 ≥2源</FilterChip>
         </div>
         <div className="flex flex-wrap gap-2">
           {CATEGORIES.map(({ key, label }) => (
-            <FilterChip key={key || 'all'} active={filters.category === key} onClick={() => setFilter('category', key)}>{label}</FilterChip>
+            <FilterChip key={key || 'cat-all'} active={filters.category === key} onClick={() => setFilter('category', key)}>{label}</FilterChip>
           ))}
         </div>
         <div className="flex flex-wrap gap-2 items-center">
@@ -138,8 +142,8 @@ export default function HotspotPage() {
       </div>
 
       <p className="text-xs font-mono text-silver mb-4">
-        {loading ? '加载中...' : `共 ${total} 条，当前显示 ${items.length} 条`}
-        {summary?.last_updated && ` · 更新 ${new Date(summary.last_updated).toLocaleString('zh-CN')}`}
+        {loading ? '加载中...' : `共 ${total} 条`}
+        {summary?.last_updated && ` · ${new Date(summary.last_updated).toLocaleString('zh-CN')}`}
       </p>
 
       {loading ? (
@@ -151,22 +155,22 @@ export default function HotspotPage() {
           ))}
         </div>
       ) : (
-        <EmptyState title="暂无热点" description="调整筛选条件，或点击顶部抓取更新积累数据" />
+        <EmptyState title="暂无热点" description="调整筛选条件或抓取更新" />
       )}
     </div>
   )
 }
 
-function Stat({ label, value }: { label: string; value: number }) {
+function Stat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className="border border-ink p-3">
+    <div className={`border border-ink p-3 ${accent ? 'bg-mist' : 'bg-paper'}`}>
       <p className="text-[10px] font-mono text-silver">{label}</p>
       <p className="font-serif text-xl font-semibold mt-1">{value}</p>
     </div>
   )
 }
 
-function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
   return (
     <button
       type="button"

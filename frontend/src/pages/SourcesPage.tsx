@@ -22,7 +22,7 @@ export default function SourcesPage() {
     <div className="max-w-4xl mx-auto px-6 py-12">
       <header className="mb-10 pb-6 border-b border-ink">
         <h1 className="font-serif text-3xl font-semibold">数据源</h1>
-        <p className="mt-2 text-sm text-ash">修改 config/sources.yaml 可增删数据源</p>
+
       </header>
       {loading ? <p className="text-sm text-silver font-mono">加载中...</p> : (
         <div className="border border-ink">

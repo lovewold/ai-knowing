@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   adminApi,
   type BriefingConfig,
@@ -6,7 +7,10 @@ import {
   type SourceConfig,
 } from '../../api/admin'
 
-const SOURCE_TYPES = ['rss', 'arxiv', 'hackernews', 'github_trending', 'github_search'] as const
+const SOURCE_TYPES = [
+  'rss', 'arxiv', 'hackernews', 'github_trending', 'github_search',
+  'firecrawl', 'twitterapi_io', 'http_json',
+] as const
 
 const emptySource = (): SourceConfig => ({
   id: '',
@@ -16,6 +20,7 @@ const emptySource = (): SourceConfig => ({
   language: 'zh',
   enabled: true,
   url: '',
+  color: '',
 })
 
 const emptyCreator = (): DouyinCreator => ({
@@ -27,13 +32,13 @@ const emptyCreator = (): DouyinCreator => ({
 
 const defaultBriefing: BriefingConfig = {
   window_hours: 24,
-  max_articles: 12,
+  max_articles: 18,
   min_score: 68,
   include_high_signal: true,
   include_medium_zh: true,
   medium_zh_min_score: 52,
   prefer_localized: true,
-  overview_max_tokens: 280,
+  overview_max_tokens: 900,
 }
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -236,7 +241,12 @@ function SourcesTab({ setMsg }: { setMsg: (v: string | null) => void }) {
             <input type="checkbox" checked={s.enabled}
               onChange={(e) => setSources(sources.map((x) => x.id === s.id ? { ...x, enabled: e.target.checked } : x))} />
             <button type="button" onClick={() => setEditId(editId === s.id ? null : s.id)}
-              className="flex-1 text-left text-sm font-medium">{s.name}</button>
+              className="flex-1 text-left text-sm font-medium flex items-center gap-2">
+              {s.color && /^#[0-9a-fA-F]{6}$/.test(s.color) && (
+                <span className="w-2.5 h-2.5 rounded-full shrink-0 border border-black/10" style={{ backgroundColor: s.color }} />
+              )}
+              {s.name}
+            </button>
             <span className="text-xs font-mono text-silver">{s.type}</span>
             <span className="text-xs font-mono w-8 text-right">{s.weight}</span>
             <button type="button" onClick={() => removeSource(s.id)} className="text-xs text-red-700 underline">删除</button>
@@ -277,12 +287,41 @@ function SourcesTab({ setMsg }: { setMsg: (v: string | null) => void }) {
                 <option value="en">en</option>
               </select>
             </Field>
+            <Field label="品牌色 (#hex)">
+              <input className="w-full border border-smoke px-2 py-1.5 text-sm font-mono" value={editing.color || ''}
+                onChange={(e) => updateEditing({ color: e.target.value || undefined })} placeholder="#ff6498" />
+            </Field>
           </div>
-          {editing.type === 'rss' && (
-            <Field label="RSS URL">
+          {(editing.type === 'rss' || editing.type === 'firecrawl' || editing.type === 'http_json') && (
+            <Field label={editing.type === 'firecrawl' ? '目标页面 URL' : editing.type === 'http_json' ? 'JSON API URL' : 'RSS URL'}>
               <input className="w-full border border-smoke px-2 py-1.5 text-sm font-mono" value={editing.url || ''}
                 onChange={(e) => updateEditing({ url: e.target.value })} />
             </Field>
+          )}
+          {editing.type === 'http_json' && (
+            <Field label="解析器 (bilibili / v2ex / reddit)">
+              <input className="w-full border border-smoke px-2 py-1.5 text-sm font-mono" value={editing.parser || ''}
+                onChange={(e) => updateEditing({ parser: e.target.value || undefined })} />
+            </Field>
+          )}
+          {editing.type === 'twitterapi_io' && (
+            <>
+              <Field label="搜索语句 (Twitter 高级语法)">
+                <input className="w-full border border-smoke px-2 py-1.5 text-sm font-mono" value={editing.query || ''}
+                  onChange={(e) => updateEditing({ query: e.target.value })} />
+              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="排序 (Top / Latest)">
+                  <input className="w-full border border-smoke px-2 py-1.5 text-sm font-mono" value={editing.filter || 'Top'}
+                    onChange={(e) => updateEditing({ filter: e.target.value || undefined })} />
+                </Field>
+                <Field label="最低互动量">
+                  <input type="number" min={0} className="w-full border border-smoke px-2 py-1.5 text-sm"
+                    value={editing.min_engagement ?? 100}
+                    onChange={(e) => updateEditing({ min_engagement: Number(e.target.value) })} />
+                </Field>
+              </div>
+            </>
           )}
           {editing.type === 'arxiv' && (
             <Field label="ArXiv 分类">
@@ -314,8 +353,25 @@ function SourcesTab({ setMsg }: { setMsg: (v: string | null) => void }) {
 }
 
 export default function AdminConfigPage() {
-  const [tab, setTab] = useState<'briefing' | 'creators' | 'sources'>('briefing')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const initialTab = tabParam === 'sources' || tabParam === 'creators' || tabParam === 'briefing'
+    ? tabParam
+    : 'briefing'
+  const [tab, setTab] = useState<'briefing' | 'creators' | 'sources'>(initialTab)
   const [msg, setMsg] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (tabParam === 'sources' || tabParam === 'creators' || tabParam === 'briefing') {
+      setTab(tabParam)
+    }
+  }, [tabParam])
+
+  function selectTab(key: 'briefing' | 'creators' | 'sources') {
+    setTab(key)
+    setMsg(null)
+    setSearchParams(key === 'briefing' ? {} : { tab: key })
+  }
 
   const tabs = [
     { key: 'briefing' as const, label: '晨报设置' },
@@ -329,7 +385,7 @@ export default function AdminConfigPage() {
       <p className="text-sm text-ash mb-6">表单化编辑，无需手动改 JSON</p>
       <div className="flex gap-2 mb-6 border-b border-ink">
         {tabs.map(({ key, label }) => (
-          <button key={key} type="button" onClick={() => { setTab(key); setMsg(null) }}
+          <button key={key} type="button" onClick={() => selectTab(key)}
             className={`px-4 py-2 text-sm border-b-2 -mb-px ${tab === key ? 'border-ink font-medium' : 'border-transparent text-ash'}`}>
             {label}
           </button>

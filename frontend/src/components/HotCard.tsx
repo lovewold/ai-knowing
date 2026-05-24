@@ -1,6 +1,7 @@
 import type { Hotspot } from '../types'
 import HeatBadge from './HeatBadge'
 import SignalBadge from './SignalBadge'
+import SourceBadge from './SourceBadge'
 
 interface HotCardProps {
   hotspot: Hotspot
@@ -45,9 +46,9 @@ export default function HotCard({ hotspot, rank }: HotCardProps) {
       {hotspot.summary && (
         <p className="text-xs text-ash mt-2 leading-relaxed line-clamp-2">{hotspot.summary}</p>
       )}
-      <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-silver">
-        <span>{hotspot.source}</span>
-        <span>{date}</span>
+      <div className="mt-3 flex items-center justify-between text-[10px] font-mono">
+        <SourceBadge name={hotspot.source} sourceId={hotspot.source_id} />
+        <span className="text-silver">{date}</span>
       </div>
     </a>
   )

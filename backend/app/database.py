@@ -48,8 +48,19 @@ def migrate_db():
         conn.commit()
         conn.execute(text("ALTER TYPE reporttype ADD VALUE IF NOT EXISTS 'daily_briefing'"))
         conn.commit()
+        conn.execute(text("ALTER TYPE reporttype ADD VALUE IF NOT EXISTS 'knowledge'"))
+        conn.commit()
         if not _column_exists("reports", "user_prompt"):
             conn.execute(text("ALTER TABLE reports ADD COLUMN user_prompt TEXT"))
+            conn.commit()
+        if not _column_exists("reports", "citations_json"):
+            conn.execute(text("ALTER TABLE reports ADD COLUMN citations_json TEXT"))
+            conn.commit()
+        if not _column_exists("reports", "search_queries_json"):
+            conn.execute(text("ALTER TABLE reports ADD COLUMN search_queries_json TEXT"))
+            conn.commit()
+        if not _column_exists("reports", "combo_id"):
+            conn.execute(text("ALTER TABLE reports ADD COLUMN combo_id INTEGER REFERENCES agent_combos(id)"))
             conn.commit()
 
 

@@ -1,0 +1,74 @@
+entries:
+  - slug: deepseek-chat
+    kind: model
+    name: DeepSeek Chat
+    summary: 国产高性价比大语言模型，适合对话、代码与长文本任务。
+    external_url: https://platform.deepseek.com/api-docs
+    tags: LLM,API,中文
+    content_md: |
+      ## 能力概览
+      - 对话与推理
+      - 代码生成
+      - OpenAI 兼容 API
+
+      ## 调用方式
+      使用 `/v1/chat/completions` 端点，Bearer Token 鉴权。
+
+      ## 适用场景
+      资讯分析、报告撰写、Agent 编排的后端模型。
+
+  - slug: openai-gpt-4o
+    kind: model
+    name: OpenAI GPT-4o
+    summary: OpenAI 多模态旗舰模型，支持文本与图像输入。
+    external_url: https://platform.openai.com/docs
+    tags: LLM,多模态,API
+    content_md: |
+      ## 能力
+      强推理、工具调用、视觉理解。
+
+      ## 调用
+      OpenAI SDK 或 REST API，`gpt-4o` 模型 ID。
+
+  - slug: claude-sonnet
+    kind: model
+    name: Anthropic Claude Sonnet
+    summary: Anthropic 平衡型模型，长上下文与代码表现优秀。
+    external_url: https://docs.anthropic.com
+    tags: LLM,Agent,长上下文
+    content_md: |
+      ## 特点
+      200K 上下文，适合 RAG 与文档分析。
+
+  - slug: cursor-ide
+    kind: product
+    name: Cursor
+    summary: AI 原生代码编辑器，集成 Agent、Composer 与 MCP。
+    external_url: https://cursor.com
+    tags: IDE,Agent,MCP
+    content_md: |
+      ## 产品定位
+      面向开发者的 AI IDE，支持代码库级上下文与多文件编辑。
+
+  - slug: coze
+    kind: product
+    name: Coze / 扣子
+    summary: 字节跳动 AI Agent 搭建与发布平台。
+    external_url: https://www.coze.cn
+    tags: Agent,低代码,Bot
+    content_md: |
+      ## 适用
+      快速搭建对话 Bot 与工作流 Agent。
+
+  - slug: skill-mcp
+    kind: skill
+    name: MCP (Model Context Protocol)
+    summary: 连接 LLM 与外部工具/数据源的标准协议，Cursor 等已支持。
+    external_url: https://modelcontextprotocol.io
+    tags: MCP,工具,协议
+    content_md: |
+      ## 是什么
+      MCP 让模型通过统一协议访问文件、数据库、API。
+
+      ## 学习路径
+      阅读官方 Quickstart，在 Cursor 中配置 MCP Server。

@@ -1,96 +1,152 @@
 sources:
-  - id: arxiv-cs-ai
-    name: ArXiv CS.AI
-    type: arxiv
-    category: cs.AI
-    weight: 95
-    language: en
-    enabled: true
-
-  - id: arxiv-cs-lg
-    name: ArXiv CS.LG
-    type: arxiv
-    category: cs.LG
-    weight: 95
-    language: en
-    enabled: true
-
-  - id: github-trending-python
-    name: GitHub Trending Python
-    type: github_trending
-    language: python
-    weight: 65
-    enabled: true
-
-  - id: hackernews
-    name: Hacker News
-    type: hackernews
-    weight: 60
-    language: en
-    enabled: true
-
-  - id: techcrunch-ai
-    name: TechCrunch AI
-    type: rss
-    url: https://techcrunch.com/category/artificial-intelligence/feed/
-    weight: 80
-    language: en
-    enabled: true
-
-  - id: jiqizhixin
-    name: 机器之心
-    type: rss
-    url: https://www.jiqizhixin.com/rss
-    weight: 55
-    language: zh
-    enabled: true
-
-  - id: hn-show
-    name: HN Show
-    type: hackernews
-    filter: show
-    weight: 70
-    language: en
-    enabled: true
-
-  # Agent 工具专项抓取
-  - id: github-agents
-    name: GitHub Agent 框架
-    type: github_search
-    query: "ai agent framework stars:>500"
-    weight: 80
-    language: en
-    enabled: true
-
-  - id: github-multi-agents
-    name: GitHub 多Agent协作
-    type: github_search
-    query: "multi-agent llm stars:>200"
-    weight: 75
-    language: en
-    enabled: true
-
-  - id: github-mcp
-    name: GitHub MCP 协议
-    type: github_search
-    query: "model context protocol mcp stars:>100"
-    weight: 78
-    language: en
-    enabled: true
-
-  - id: github-agent-tools
-    name: GitHub Agent 工具集
-    type: github_search
-    query: "llm agent tools stars:>300"
-    weight: 72
-    language: en
-    enabled: true
-
-  # 在此添加自定义数据源，修改后重启 worker 生效
-  # - id: my-blog
-  #   name: 我的博客
-  #   type: rss
-  #   url: https://example.com/feed
-  #   weight: 25
-  #   language: zh
-  #   enabled: true
+- id: weibo-hot
+  name: 微博热搜
+  type: firecrawl
+  url: https://s.weibo.com/top/summary
+  weight: 42
+  language: zh
+  enabled: true
+  color: '#ff6498'
+- id: baidu-hot
+  name: 百度热搜
+  type: firecrawl
+  url: https://top.baidu.com/board?tab=realtime
+  weight: 38
+  language: zh
+  enabled: true
+  color: '#6d90ff'
+- id: zhihu-hot
+  name: 知乎热榜
+  type: firecrawl
+  url: https://www.zhihu.com/hot
+  weight: 48
+  language: zh
+  enabled: true
+  color: '#33eaff'
+- id: twitter-ai
+  name: Twitter/X AI
+  type: twitterapi_io
+  query: (AI OR LLM OR "machine learning" OR agent) lang:en
+  filter: Top
+  min_engagement: 100
+  weight: 45
+  language: en
+  enabled: true
+  color: '#33f092'
+- id: bilibili-rank
+  name: B站排行
+  type: http_json
+  url: https://api.bilibili.com/x/web-interface/ranking/v2?rid=0&type=all
+  parser: bilibili
+  weight: 50
+  language: zh
+  enabled: true
+  color: '#fb7299'
+- id: v2ex-hot
+  name: V2EX 热门
+  type: http_json
+  url: https://www.v2ex.com/api/topics/hot.json
+  parser: v2ex
+  weight: 52
+  language: zh
+  enabled: true
+  color: '#a0a0a0'
+- id: google-news-ai
+  name: Google News AI
+  type: rss
+  url: https://news.google.com/rss/search?q=artificial+intelligence&hl=zh-CN&gl=CN&ceid=CN:zh-Hans
+  weight: 72
+  language: zh
+  enabled: true
+  color: '#ea4335'
+- id: reddit-popular
+  name: Reddit Popular
+  type: http_json
+  url: https://www.reddit.com/r/popular/hot.json?limit=25
+  parser: reddit
+  weight: 48
+  language: en
+  enabled: true
+  color: '#ff4500'
+- id: arxiv-cs-ai
+  name: ArXiv CS.AI
+  type: arxiv
+  category: cs.AI
+  weight: 95
+  language: en
+  enabled: true
+- id: arxiv-cs-lg
+  name: ArXiv CS.LG
+  type: arxiv
+  category: cs.LG
+  weight: 95
+  language: en
+  enabled: true
+- id: github-trending-python
+  name: GitHub Trending
+  type: github_trending
+  language: python
+  weight: 65
+  enabled: true
+  color: '#c8d2dc'
+- id: hackernews
+  name: Hacker News
+  type: hackernews
+  weight: 60
+  language: en
+  enabled: true
+  color: '#ff8844'
+- id: techcrunch-ai
+  name: TechCrunch AI
+  type: rss
+  url: https://techcrunch.com/category/artificial-intelligence/feed/
+  weight: 80
+  language: en
+  enabled: true
+- id: jiqizhixin
+  name: 机器之心
+  type: rss
+  url: https://www.jiqizhixin.com/rss
+  weight: 55
+  language: zh
+  enabled: true
+- id: hn-show
+  name: HN Show
+  type: hackernews
+  filter: show
+  weight: 70
+  language: en
+  enabled: true
+  color: '#ff8844'
+- id: github-agents
+  name: GitHub Agent 框架
+  type: github_search
+  query: ai agent framework stars:>500
+  weight: 80
+  language: en
+  enabled: true
+  color: '#c8d2dc'
+- id: github-multi-agents
+  name: GitHub 多Agent协作
+  type: github_search
+  query: multi-agent llm stars:>200
+  weight: 75
+  language: en
+  enabled: true
+  color: '#c8d2dc'
+- id: github-mcp
+  name: GitHub MCP 协议
+  type: github_search
+  query: model context protocol mcp stars:>100
+  weight: 78
+  language: en
+  enabled: true
+  color: '#c8d2dc'
+- id: github-agent-tools
+  name: GitHub Agent 工具集
+  type: github_search
+  query: llm agent tools stars:>300
+  weight: 72
+  language: en
+  enabled: true
+  color: '#c8d2dc'

@@ -4,6 +4,10 @@ root = true
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
+trim_trailing_whitespace = true
 
-[*.{tsx,ts,jsx,js,html,css,json,md,yaml,yml}]
+[*.{tsx,ts,jsx,js,json,md,yaml,yml,html,css}]
+charset = utf-8
+
+[*.py]
 charset = utf-8
