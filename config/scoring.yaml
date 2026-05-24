@@ -1,0 +1,28 @@
+# 信噪比计算参数 — 百分制（0-100），参考 aihot 来源权重 + 跨源验证 + 实体密度 + 时效
+
+weights:
+  source: 0.40          # 来源可信度，最高 40 分
+  cross_validation: 0.25  # 跨源交叉验证，最高 25 分
+  entity_density: 0.20    # AI 实体密度，最高 20 分
+  time_decay: 0.15        # 时效衰减，最高 15 分
+
+thresholds:
+  high: 70.0      # 高信号，进入报告队列
+  medium: 45.0    # 观察池
+  # < 45 低信号，仅资讯流
+
+time_decay:
+  lambda: 0.01
+
+cross_validation:
+  window_hours: 72
+  max_sources: 5
+
+dedup:
+  title_similarity_threshold: 0.85
+  window_hours: 48
+
+quality_gate:
+  min_entity_density: 0.06   # 标题+摘要 AI 实体密度下限
+  min_title_length: 10
+  min_save_score: 32         # 预估分低于此不入库

@@ -1,0 +1,43 @@
+# 抖音 AI 领域优质博主（人工 curated，晨报「推荐关注」板块）
+# profile_url 为抖音主页，用户可外链跳转
+
+creators:
+  - name: 秋芝2046
+    profile_url: https://www.douyin.com/search/秋芝2046
+    focus: AI 工具实操、办公提效
+    reason: 讲解清晰，适合跟进最新 AI 应用落地
+
+  - name: 程序员鱼皮
+    profile_url: https://www.douyin.com/search/程序员鱼皮
+    focus: 编程 + AI 开发
+    reason: 技术向内容扎实，适合开发者
+
+  - name: 李永乐老师
+    profile_url: https://www.douyin.com/search/李永乐老师
+    focus: 科普、技术原理浅讲
+    reason: 复杂概念通俗化，适合建立认知框架
+
+  - name: 赛文乔伊
+    profile_url: https://www.douyin.com/search/赛文乔伊
+    focus: AIGC、Midjourney、设计工作流
+    reason: 视觉生成与工作流更新快
+
+  - name: 硬核测评
+    profile_url: https://www.douyin.com/search/AI硬核测评
+    focus: AI 产品测评对比
+    reason: 产品选型参考，避坑向
+
+  - name: 量子位
+    profile_url: https://www.douyin.com/search/量子位
+    focus: AI 行业新闻快讯
+    reason: 资讯密度高，与晨报资讯互补
+
+  - name: 机器之心
+    profile_url: https://www.douyin.com/search/机器之心
+    focus: 学术与产业动态
+    reason: 偏深度，适合技术从业者
+
+  - name: 何同学
+    profile_url: https://www.douyin.com/search/何同学
+    focus: 科技产品、创新叙事
+    reason: 传播力强，适合感知技术趋势与大众认知

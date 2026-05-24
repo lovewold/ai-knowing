@@ -1,0 +1,11 @@
+# 每日晨报配置（省 Token：仅汇总高质量资讯，单次 LLM 写导语）
+# 评分已改为百分制 0-100
+
+window_hours: 24
+max_articles: 12
+min_score: 68.0
+include_high_signal: true
+include_medium_zh: true
+medium_zh_min_score: 52.0
+prefer_localized: true
+overview_max_tokens: 280

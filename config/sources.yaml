@@ -1,0 +1,96 @@
+sources:
+  - id: arxiv-cs-ai
+    name: ArXiv CS.AI
+    type: arxiv
+    category: cs.AI
+    weight: 95
+    language: en
+    enabled: true
+
+  - id: arxiv-cs-lg
+    name: ArXiv CS.LG
+    type: arxiv
+    category: cs.LG
+    weight: 95
+    language: en
+    enabled: true
+
+  - id: github-trending-python
+    name: GitHub Trending Python
+    type: github_trending
+    language: python
+    weight: 65
+    enabled: true
+
+  - id: hackernews
+    name: Hacker News
+    type: hackernews
+    weight: 60
+    language: en
+    enabled: true
+
+  - id: techcrunch-ai
+    name: TechCrunch AI
+    type: rss
+    url: https://techcrunch.com/category/artificial-intelligence/feed/
+    weight: 80
+    language: en
+    enabled: true
+
+  - id: jiqizhixin
+    name: 机器之心
+    type: rss
+    url: https://www.jiqizhixin.com/rss
+    weight: 55
+    language: zh
+    enabled: true
+
+  - id: hn-show
+    name: HN Show
+    type: hackernews
+    filter: show
+    weight: 70
+    language: en
+    enabled: true
+
+  # Agent 工具专项抓取
+  - id: github-agents
+    name: GitHub Agent 框架
+    type: github_search
+    query: "ai agent framework stars:>500"
+    weight: 80
+    language: en
+    enabled: true
+
+  - id: github-multi-agents
+    name: GitHub 多Agent协作
+    type: github_search
+    query: "multi-agent llm stars:>200"
+    weight: 75
+    language: en
+    enabled: true
+
+  - id: github-mcp
+    name: GitHub MCP 协议
+    type: github_search
+    query: "model context protocol mcp stars:>100"
+    weight: 78
+    language: en
+    enabled: true
+
+  - id: github-agent-tools
+    name: GitHub Agent 工具集
+    type: github_search
+    query: "llm agent tools stars:>300"
+    weight: 72
+    language: en
+    enabled: true
+
+  # 在此添加自定义数据源，修改后重启 worker 生效
+  # - id: my-blog
+  #   name: 我的博客
+  #   type: rss
+  #   url: https://example.com/feed
+  #   weight: 25
+  #   language: zh
+  #   enabled: true

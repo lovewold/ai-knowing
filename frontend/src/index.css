@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth antialiased;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans;
+  }
+
+  ::selection {
+    @apply bg-ink text-paper;
+  }
+}
+
+@layer components {
+  .line-border {
+    @apply border border-ink;
+  }
+
+  .line-border-b {
+    @apply border-b border-ink;
+  }
+
+  .line-border-t {
+    @apply border-t border-ink;
+  }
+
+  .prose-report h1 {
+    @apply font-serif text-2xl font-semibold mt-12 mb-6 pb-3 border-b border-ink first:mt-0;
+  }
+
+  .prose-report h2 {
+    @apply font-serif text-xl font-semibold mt-12 mb-4 pb-2 border-b border-ink scroll-mt-24;
+  }
+
+  .prose-report h3 {
+    @apply font-serif text-lg font-medium mt-8 mb-3 scroll-mt-24;
+  }
+
+  .prose-report h4 {
+    @apply font-medium text-ink mt-6 mb-2;
+  }
+
+  .prose-report p {
+    @apply text-ash leading-[1.85] mb-5 text-[15px];
+  }
+
+  .prose-report ul,
+  .prose-report ol {
+    @apply pl-6 mb-5 space-y-2 text-ash text-[15px];
+  }
+
+  .prose-report ul {
+    @apply list-disc;
+  }
+
+  .prose-report ol {
+    @apply list-decimal;
+  }
+
+  .prose-report li {
+    @apply leading-[1.75];
+  }
+
+  .prose-report li::marker {
+    @apply text-silver;
+  }
+
+  .prose-report strong {
+    @apply text-ink font-semibold;
+  }
+
+  .prose-report code {
+    @apply font-mono text-[13px] bg-mist px-1.5 py-0.5 border border-smoke rounded-sm;
+  }
+
+  .prose-report pre,
+  .report-pre {
+    @apply font-mono text-[13px] bg-mist p-5 border border-ink overflow-x-auto mb-6 leading-relaxed;
+  }
+
+  .prose-report pre code {
+    @apply bg-transparent border-0 p-0 text-[13px];
+  }
+
+  .prose-report blockquote,
+  .report-blockquote {
+    @apply border-l-[3px] border-ink pl-5 py-1 my-6 text-ash bg-mist/50 not-italic;
+  }
+
+  .report-table-wrap {
+    @apply overflow-x-auto my-6 border border-ink;
+  }
+
+  .prose-report table {
+    @apply w-full border-collapse mb-0 text-sm;
+  }
+
+  .prose-report th,
+  .prose-report td {
+    @apply border border-smoke px-4 py-2.5 text-left align-top;
+  }
+
+  .prose-report th {
+    @apply bg-mist font-medium text-ink;
+  }
+
+  .prose-report tr:nth-child(even) td {
+    @apply bg-mist/30;
+  }
+
+  .prose-report a {
+    @apply text-ink underline underline-offset-[3px] decoration-smoke hover:decoration-ink transition-colors;
+  }
+
+  .report-img {
+    @apply max-w-full h-auto my-6 border border-smoke;
+  }
+
+  .report-hr {
+    @apply border-0 border-t border-ink my-10;
+  }
+
+  .report-page {
+    @apply bg-paper;
+  }
+}
+
+@media print {
+  header,
+  footer:not(.report-page footer),
+  nav,
+  aside,
+  .print\\:hidden {
+    display: none !important;
+  }
+
+  .report-page {
+    background: white !important;
+  }
+
+  .prose-report h2 {
+    page-break-after: avoid;
+  }
+
+  .prose-report pre,
+  .report-pre {
+    white-space: pre-wrap;
+    border: 1px solid #ccc;
+  }
+}
+
+@layer utilities {
+  .stagger-1 { animation-delay: 0.05s; }
+  .stagger-2 { animation-delay: 0.1s; }
+  .stagger-3 { animation-delay: 0.15s; }
+  .stagger-4 { animation-delay: 0.2s; }
+  .stagger-5 { animation-delay: 0.25s; }
+}

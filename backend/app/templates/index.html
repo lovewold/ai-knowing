@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI全知 - 知识库</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e1e4e8; line-height: 1.6; }
+    .header { background: linear-gradient(135deg, #1a1f2e 0%, #252b3b 100%); padding: 2rem; border-bottom: 1px solid #30363d; }
+    .header h1 { font-size: 1.8rem; background: linear-gradient(90deg, #58a6ff, #bc8cff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .header p { color: #8b949e; margin-top: 0.5rem; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1.5rem; }
+    .card h2 { font-size: 1.1rem; color: #58a6ff; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #30363d; }
+    .item { padding: 0.75rem 0; border-bottom: 1px solid #21262d; }
+    .item:last-child { border-bottom: none; }
+    .item a { color: #e1e4e8; text-decoration: none; }
+    .item a:hover { color: #58a6ff; }
+    .meta { font-size: 0.8rem; color: #8b949e; margin-top: 0.25rem; }
+    .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.75rem; margin-right: 0.5rem; }
+    .badge-trend { background: #1f3a5f; color: #58a6ff; }
+    .badge-tool { background: #2d1f5e; color: #bc8cff; }
+    .badge-scenario { background: #1f3d2f; color: #3fb950; }
+    .badge-high { background: #3d1f1f; color: #f85149; }
+    .badge-medium { background: #3d3a1f; color: #d29922; }
+    .badge-low { background: #21262d; color: #8b949e; }
+    .sources { margin-top: 2rem; }
+    .source-tag { display: inline-block; background: #21262d; padding: 0.25rem 0.75rem; border-radius: 4px; margin: 0.25rem; font-size: 0.85rem; color: #8b949e; }
+    .actions { margin-top: 1rem; }
+    .btn { background: #238636; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+    .btn:hover { background: #2ea043; }
+    .empty { color: #8b949e; font-style: italic; padding: 1rem 0; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>AI全知</h1>
+    <p>AI 行业知识库 — 自动抓取 · 信噪比过滤 · AI 报告生成</p>
+  </div>
+  <div class="container">
+    <div class="actions">
+      <button class="btn" onclick="triggerCrawl()">立即抓取</button>
+      <span id="crawl-status" style="margin-left:1rem;color:#8b949e;"></span>
+    </div>
+    <div class="grid" style="margin-top:1.5rem;">
+      <div class="card">
+        <h2>AI 报告 ({{ reports|length }})</h2>
+        {% if reports %}
+          {% for r in reports %}
+          <div class="item">
+            <span class="badge badge-{{ r.report_type.value }}">{{ r.report_type.value }}</span>
+            <a href="/reports/{{ r.id }}">{{ r.title[:80] }}</a>
+            <div class="meta">{{ r.quality_label }} · {{ r.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="empty">暂无报告。点击「立即抓取」开始采集并生成。</p>
+        {% endif %}
+      </div>
+      <div class="card">
+        <h2>最新资讯 ({{ articles|length }})</h2>
+        {% if articles %}
+          {% for a in articles %}
+          <div class="item">
+            <a href="{{ a.url }}" target="_blank">{{ a.title[:80] }}</a>
+            <div class="meta">
+              {{ a.source_name }}
+              {% if a.signal %}
+                · 信号 {{ "%.2f"|format(a.signal.score) }}
+                <span class="badge badge-{{ a.signal.status.value }}">{{ a.signal.status.value }}</span>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="empty">暂无资讯。</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card sources">
+      <h2>已配置数据源 ({{ sources|length }})</h2>
+      {% for s in sources %}
+        <span class="source-tag">{{ s.name }} ({{ s.type }}, 权重{{ s.weight }})</span>
+      {% endfor %}
+      <p class="meta" style="margin-top:1rem;">修改 config/sources.yaml 可增删数据源</p>
+    </div>
+  </div>
+  <script>
+    async function triggerCrawl() {
+      const el = document.getElementById('crawl-status');
+      el.textContent = '抓取任务已提交...';
+      try {
+        const resp = await fetch('/api/crawl/trigger', { method: 'POST' });
+        const data = await resp.json();
+        el.textContent = data.status === 'queued'
+          ? '任务已排队 (ID: ' + data.task_id + ')，请稍后刷新页面'
+          : '完成: ' + JSON.stringify(data.result);
+      } catch (e) {
+        el.textContent = '提交失败: ' + e.message;
+      }
+    }
+  </script>
+</body>
+</html>
